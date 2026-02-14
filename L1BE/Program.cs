@@ -1,4 +1,5 @@
 using Dapper;
+using L1BE.BLL;
 using Migrations;
 
 // создается билдер веб приложения
@@ -8,6 +9,11 @@ DefaultTypeMap.MatchNamesWithUnderscores = true;
 builder.Services.AddScoped<UnitOfWork>();
 
 builder.Services.Configure<DbSettings>(builder.Configuration.GetSection(nameof(DbSettings)));
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<OrderService>();
+
 // зависимость, которая автоматически подхватывает все контроллеры в проекте
 builder.Services.AddControllers();
 // добавляем swagger

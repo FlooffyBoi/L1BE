@@ -8,7 +8,7 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
         // пишем sql
         // после from можно увидеть unnest(@Orders) - это и есть механизм композитных типов
         var sql = @"
-            insert into orders 
+            insert into order_items
             (
              order_id,
              product_id,
@@ -30,7 +30,7 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
              price_currency,
              created_at,
              updated_at
-            from unnest(@Orders)
+            from unnest(@OrderItems)
             returning 
              id,
              order_id,
@@ -51,7 +51,7 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
         // new {Orders = model} - это динамический тип данных
         // Dapper просто возьмет название поля и заменит в sql-запросе @Orders на наши модели
         var res = await conn.QueryAsync<V1OrderItemDal>(new CommandDefinition(
-            sql, new {Orders = models}, cancellationToken: token));
+            sql, new {OrderItems = models}, cancellationToken: token));
         
         return res.ToArray();
     }
@@ -70,7 +70,7 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
                  price_currency,
                  created_at,
                  updated_at
-            from orders
+            from order_items
         ");
         
         // тот же динамический тип данных 
